@@ -1,0 +1,54 @@
+version: "2.1"
+services:
+  mssql:
+    image: "mcr.microsoft.com/mssql/server"
+    container_name: SQLServer_Kasem123
+    restart: "no"
+    ports:
+      - "1433:1433"
+    expose:
+      - "1433"
+    volumes:
+      - sqlvolume:/var/opt/mssql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+      SA_PASSWORD: "K@sem123"
+
+  phpweb:
+    build:
+      context: .
+      dockerfile: ./deploy/dev58/DockerFile
+    image: "limweb/webphp:v8.1"
+    container_name: phpweb
+    working_dir: /var/www/html/
+    restart: "no"
+    ports:
+      - "8888:8080"
+    expose:
+      - "8888"
+    volumes:
+      - ./web:/var/www/html
+    depends_on:
+      - "mssql"
+
+  # portainer:
+  #   image: portainer/portainer
+  #   container_name: portainer
+  #   privileged: true
+  #   ports:
+  #     - 9000:9000
+  #     - 8000:8000
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - portainervol:/data
+  #   restart: always
+
+volumes:
+  sqlvolume:
+  portainervol:
+
+networks:
+  default:
+    external:
+      name: proxy-network
