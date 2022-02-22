@@ -1,0 +1,25 @@
+#  docker-compose -f docker-compose.yml config check validate config
+version: "2.1"
+services:
+  phptest3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: "limweb/test3:latest"
+    container_name: phptest3
+    working_dir: /var/www/html
+    restart: "always"
+    command: "/usr/bin/php /var/www/html/index.php"
+    ports:
+      - "8883:8080"
+    volumes:
+      - ./web:/var/www/html/
+    labels:
+      com.docker.compose.project: "phptest3"
+
+networks:
+  default:
+    external:
+      name: proxy-network
+
+

@@ -1,0 +1,9 @@
+{
+    "require": {
+        "jacwright/restserver": "^1.2",
+        "symfony/var-dumper": "^6.0",
+        "illuminate/database": "^9.1",
+        "illuminate/events": "^9.1",
+        "composer": "^2.2"
+    }
+}
