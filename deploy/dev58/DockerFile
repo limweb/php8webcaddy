@@ -2,7 +2,7 @@ FROM ubuntu:20.04 as install
 
 WORKDIR /var/www/html
 USER root
-# -----install php8-----------
+# -----install php8.1.2-----------
 RUN apt update
 RUN apt -y upgrade
 RUN apt install -y lsb-release ca-certificates apt-transport-https software-properties-common -y
@@ -13,6 +13,7 @@ RUN apt install -y PHP8.1-amqp PHP8.1-common PHP8.1-gd PHP8.1-ldap PHP8.1-odbc P
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# ----- Install php8 sqlsrv pdo_sqlsrv --------
 RUN apt-get update -qq
 RUN apt-get install -qq -y curl gnupg
 RUN echo "deb [arch=amd64] https://packages.microsoft.com/ubuntu/20.04/prod focal main" > /etc/apt/sources.list.d/mssql.list
@@ -38,7 +39,6 @@ RUN apt update
 RUN apt install caddy
 RUN caddy version
 RUN setcap 'cap_net_bind_service=+ep' /usr/bin/caddy
-COPY deploy/dev58/config /etc/php/8.1/fpm/conf.d
 
 # COPY application /var/www/html/application
 # COPY assets /var/www/html/assets
@@ -50,18 +50,17 @@ COPY deploy/dev58/config /etc/php/8.1/fpm/conf.d
 RUN mkdir /run/php
 COPY deploy/dev58/Caddyfile /etc/caddy/
 COPY deploy/dev58/php-caddy-entrypoint /usr/local/bin/
+COPY deploy/dev58/config /etc/php/8.1/fpm/conf.d
 COPY deploy/dev58/www.conf /etc/php/8.1/fpm/pool.d/www.conf
 RUN chmod +x /usr/local/bin/php-caddy-entrypoint
 
 RUN apt install curl wget net-tools iputils-ping less -y
 
-RUN apt install -y net-tools
 RUN pear clear-cache
 RUN apt-get purge -qq --autoremove -y curl gnupg unixodbc-dev php-pear PHP8.1-dev gcc g++ build-essential
 RUN apt-get autoremove -qq -y
 RUN apt-get autoclean -qq
 RUN apt-get clean -qq
-RUN rm -rf /var/lib/{apt,dpkg,cache,log}/
 RUN rm -rf /build /tmp/* /usr/share/php/docs /usr/share/php/tests
 RUN find /root /var/lib/apt/lists /usr/share/man /usr/share/doc /var/cache /var/log -type f -delete
 RUN apt-get clean autoclean
