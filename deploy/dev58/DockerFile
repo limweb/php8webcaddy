@@ -9,7 +9,8 @@ RUN apt install -y lsb-release ca-certificates apt-transport-https software-prop
 RUN add-apt-repository ppa:ondrej/php
 RUN apt install -y debian-keyring debian-archive-keyring apt-transport-https
 RUN apt -y install PHP8.1 php-xml
-RUN apt install -y PHP8.1-amqp PHP8.1-common PHP8.1-gd PHP8.1-ldap PHP8.1-odbc PHP8.1-readline PHP8.1-sqlite3 PHP8.1-xsl PHP8.1-apcu PHP8.1-curl PHP8.1-gmp PHP8.1-opcache PHP8.1-redis PHP8.1-mbstring PHP8.1-pgsql PHP8.1-yaml PHP8.1-dev PHP8.1-imagick PHP8.1-memcached PHP8.1-uuid PHP8.1-zip PHP8.1-bz2 PHP8.1-zmq PHP8.1-interbase PHP8.1-mysql PHP8.1-soap PHP8.1-cli PHP8.1-fpm PHP8.1-intl PHP8.1-oauth PHP8.1-xml PHP8.1-mongodb
+RUN apt install -y PHP8.1-amqp PHP8.1-common PHP8.1-gd PHP8.1-ldap PHP8.1-odbc PHP8.1-readline PHP8.1-sqlite3 PHP8.1-xsl PHP8.1-apcu PHP8.1-curl PHP8.1-gmp PHP8.1-opcache PHP8.1-redis PHP8.1-mbstring PHP8.1-pgsql PHP8.1-yaml PHP8.1-dev PHP8.1-imagick PHP8.1-memcached PHP8.1-uuid PHP8.1-zip PHP8.1-bz2 PHP8.1-zmq PHP8.1-interbase PHP8.1-mysql PHP8.1-soap PHP8.1-cli PHP8.1-fpm PHP8.1-intl PHP8.1-oauth PHP8.1-xml PHP8.1-mongodb php8.1-bcmath
+
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN apt-get update -qq
@@ -25,6 +26,10 @@ RUN pecl -q install sqlsrv pdo_sqlsrv
 RUN echo "extension=pdo_sqlsrv.so" > /etc/php/8.1/mods-available/pdo_sqlsrv.ini
 RUN echo "extension=sqlsrv.so" > /etc/php/8.1/mods-available/sqlsrv.ini
 RUN phpenmod pdo_sqlsrv sqlsrv
+
+# ----------- install swoole ---------------------
+RUN apt install -y software-properties-common && add-apt-repository ppa:openswoole/ppa -y
+RUN apt install -y php8.1-openswoole
 
 # ----- Install Caddy --------
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | apt-key add -
